@@ -5,11 +5,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <title>Document</title>
 </head>
 
 <body>
-    hola mundo
+    <div class="container" id="app">
+        <div class="row">
+            <div class='col-sm-12'>
+                <div class="form-group">
+                    <div class='input-group date' id='datetimepicker3'>
+                        <input type='date' class="form-control" v-on:change="uf()" v-model="fecha" />
+                    </div>
+                    <table class="table table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Moeda</th>
+                                <th>Fecha</th>
+                                <th>Valor</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>{{ datos.codigo }}</td>
+                                <td>{{ datos.nombre }}</td>
+                                <td>{{ datos.unidad_medida }}</td>
+                                <td>{{ fc }}</td>
+                                <td>{{ valor }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>
 </body>
 
 </html>
+<script type="text/javascript">
+    var app = new Vue({
+        el: '#app',
+        data: {
+            fecha: '',
+            ufImp: '',
+            valor: '',
+            fc: '',
+            datos: []
+
+        },
+        methods: {
+            uf: function() {
+                var fec = this.fecha.split('-');
+                var url = 'https://mindicador.cl/api/uf/';
+                this.ufImp = url + fec[2] + "-" + fec[1] + "-" + fec[0];
+                this.valor = '';
+                axios.get(this.ufImp).then(response => {
+                    this.datos = response.data;
+                    this.fc = fec[2] + "-" + fec[1] + "-" + fec[0];
+                    this.valor = response.data.serie[0].valor;
+                    //alert(this.valor);
+                    //console.log(response.data);
+                }).catch(function(error) {
+                    console.log(error);
+                });
+            }
+        }
+    });
+</script>
